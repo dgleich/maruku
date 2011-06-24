@@ -71,6 +71,39 @@ module MaRuKu
         puts "A method called #{method} should be defined."
         return nil
       end
+      
+      # Renders a MathJax block of out this node's TeX code.
+      #
+      # @return [REXML::Document]
+      def render_mathjax(kind,tx)
+        if kind == :equation
+          # using the script that works with Instapaper
+          # see http://www.leancrew.com/all-this/2010/11/mathjax-markdown-and-instapaper/
+          # <span class="MathJax_Preview"><code>[math]</code></span>
+          # <script type="math/tex; mode=display">\int f(x) = F(x)</script>
+			
+          equation = create_html_element 'span'
+          
+          span = create_html_element 'span'
+          add_class_to(span,'MathJax_Preview')
+          code = convert_to_mathml_none(:equation, tex.strip)	
+          span << code
+			
+          script = create_html_element 'script'
+          script.attributes['type'] = 'math/tex; mode=display'
+          script << Text.new("#{tex.strip}")
+			
+          equation << span 
+          equation << script
+			
+          return equation
+        else
+          script = create_html_element 'script'
+          script.attributes['type'] = 'math/tex'
+          script << Text.new("#{tex.strip}")
+          return script
+        end
+      end
 
       def pixels_per_ex
         $pixels_per_ex ||= render_png(:inline, "x").height
@@ -96,8 +129,9 @@ module MaRuKu
       end
 
       def to_html_inline_math
-        mathml = get_setting(:html_math_output_mathml) && render_mathml(:inline, self.math)
-        png    = get_setting(:html_math_output_png)    && render_png(:inline, self.math)
+        mathml  = get_setting(:html_math_output_mathml)  && render_mathml(:inline, self.math)
+        png     = get_setting(:html_math_output_png)     && render_png(:inline, self.math)
+        mathjax = get_setting(:html_math_output_mathjax) && render_mathjax(:inline, self.math)
 
         span = create_html_element 'span'
         add_class_to(span, 'maruku-inline')
@@ -112,13 +146,28 @@ module MaRuKu
           add_class_to(img, 'maruku-png')
           span << img
         end
+        
+        if mathjax
+          span << mathjax
+        end
 
         span
       end
 
       def to_html_equation
-        mathml = get_setting(:html_math_output_mathml) && render_mathml(:equation, self.math)
-        png    = get_setting(:html_math_output_png)    && render_png(:equation, self.math)
+        mathml  = get_setting(:html_math_output_mathml)  && render_mathml(:equation, self.math)
+        png     = get_setting(:html_math_output_png)     && render_png(:equation, self.math)
+        mathjax = get_setting(:html_math_output_mathjax) && render_mathjax(:equation, self.math)
+        
+        if mathjax
+          span = create_html_element 'span'
+          add_class_to(span, 'maruku-equation')
+			
+          span << mathjax
+			
+          # mathjax handles equation numbering
+          return span
+        end
 
         div = create_html_element 'div'
         add_class_to(div, 'maruku-equation')

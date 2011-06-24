@@ -30,6 +30,9 @@ module MaRuKu
     :code_show_spaces => false,
 
     :filter_html => false,
+    
+    :html_math_output_mathjax => true,
+    :html_math_output_span_equations => false,
 
     :html_math_output_mathml => true, # also set :html_math_engine
     :html_math_engine => 'none', #ritex, itex2mml

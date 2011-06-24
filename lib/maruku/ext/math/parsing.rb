@@ -44,44 +44,58 @@ EquationStart = /^[ ]{0,3}(#{EquationOpen})(.*)$/
 EquationEnd = /^(.*)(#{EquationClose})\s*#{EqLabel}?\s*$/
 # $1 is opening, $2 is tex, $3 is closing, $4 is label
 OneLineEquation = /^[ ]{0,3}(#{EquationOpen})(.*)(#{EquationClose})\s*#{EqLabel}?\s*$/
+MultiLineEquation = /^[ ]{0,3}(#{EquationOpen})(.*?)(#{EquationClose})\s*?#{EqLabel}?\s*?$/m
 
-MaRuKu::In::Markdown.register_block_extension(
-  :regexp  => EquationStart,
-  :handler => lambda do |doc, src, con|
-    next false unless doc.is_math_enabled?
-    first = src.shift_line
-    if first =~ OneLineEquation
+if get_setting(:html_math_output_span_equations)
+  MaRuKu::In::Markdown.register_span_extension(
+    :chars   => ?\\,
+    :regexp  => EquationStart,
+    :handler => lambda do |doc, src, con|
+      next false unless doc.is_math_enabled?
+      next false unless m = src.read_regexp(MultiLineEquation)
       opening, tex, closing, label = $1, $2, $3, $4
       numerate = doc.get_setting(:math_numbered).include?(opening)
       con.push doc.md_equation(tex, label, numerate)
-      next true
-    end
-
-    opening, tex = first.scan(EquationStart).first
-    numerate = doc.get_setting(:math_numbered).include?(opening)
-    label = nil
-    loop do
-      unless src.cur_line
-        doc.maruku_error(
-          "Stream finished while reading equation\n\n" + tex.gsub(/^/, '$> '),
-          src, con)
-        break
+      true
+    end)
+else
+  MaRuKu::In::Markdown.register_block_extension(
+    :regexp  => EquationStart,
+    :handler => lambda do |doc, src, con|
+      next false unless doc.is_math_enabled?
+      first = src.shift_line
+      if first =~ OneLineEquation
+        opening, tex, closing, label = $1, $2, $3, $4
+        numerate = doc.get_setting(:math_numbered).include?(opening)
+        con.push doc.md_equation(tex, label, numerate)
+        next true
       end
 
-      line = src.shift_line
-      if line =~ EquationEnd
-        tex_line, closing = $1, $2
-        label = $3 if $3
-        tex << tex_line << "\n"
-        break
+      opening, tex = first.scan(EquationStart).first
+      numerate = doc.get_setting(:math_numbered).include?(opening)
+      label = nil
+      loop do
+        unless src.cur_line
+          doc.maruku_error(
+            "Stream finished while reading equation\n\n" + tex.gsub(/^/, '$> '),
+            src, con)
+          break
+        end
+
+        line = src.shift_line
+        if line =~ EquationEnd
+          tex_line, closing = $1, $2
+          label = $3 if $3
+          tex << tex_line << "\n"
+          break
+        end
+
+        tex << line << "\n"
       end
-
-      tex << line << "\n"
-    end
-    con.push doc.md_equation(tex, label, numerate)
-    true
-  end)
-
+      con.push doc.md_equation(tex, label, numerate)
+      true
+    end)
+end
 
 # This adds support for \eqref
 RegEqrefLatex = /\\eqref\{(\w+)\}/

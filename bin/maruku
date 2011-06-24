@@ -37,6 +37,13 @@ opt = OptionParser.new do |opts|
   end
 
 
+  opts.on("-j", "--mathjax", "Uses MathJax to render TeX") do |v|
+    using_math = true
+    MaRuKu::Globals[:html_math_output_mathjax] = true
+    MaRuKu::Globals[:html_math_output_mathml] = false
+    MaRuKu::Globals[:html_math_output_span_equations] = true
+  end
+
   opts.on("-i", "--math-images ENGINE", "Uses ENGINE to render TeX to PNG.") do |s|
     using_math = true
     MaRuKu::Globals[:html_math_output_png] = true
