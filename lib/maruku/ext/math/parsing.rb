@@ -46,7 +46,7 @@ EquationEnd = /^(.*)(#{EquationClose})\s*#{EqLabel}?\s*$/
 OneLineEquation = /^[ ]{0,3}(#{EquationOpen})(.*)(#{EquationClose})\s*#{EqLabel}?\s*$/
 MultiLineEquation = /^[ ]{0,3}(#{EquationOpen})(.*?)(#{EquationClose})\s*?#{EqLabel}?\s*?$/m
 
-if get_setting(:html_math_output_span_equations)
+if MaRuKu::Globals[:html_math_output_span_equations]
   MaRuKu::In::Markdown.register_span_extension(
     :chars   => ?\\,
     :regexp  => EquationStart,

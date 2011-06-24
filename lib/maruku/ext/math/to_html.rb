@@ -75,7 +75,7 @@ module MaRuKu
       # Renders a MathJax block of out this node's TeX code.
       #
       # @return [REXML::Document]
-      def render_mathjax(kind,tx)
+      def render_mathjax(kind,tex)
         if kind == :equation
           # using the script that works with Instapaper
           # see http://www.leancrew.com/all-this/2010/11/mathjax-markdown-and-instapaper/
