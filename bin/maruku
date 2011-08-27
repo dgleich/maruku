@@ -18,6 +18,7 @@ end
 export = :html
 break_on_error = false
 using_math = false
+using_yaml = false
 using_mathml = false
 output_file = nil
 
@@ -34,6 +35,11 @@ opt = OptionParser.new do |opts|
 
   opts.on("-b", "--[no-]break", "Break on error") do |v|
     break_on_error = v
+  end
+  
+  opts.on('-y', "--yaml-frontmatter") do |v|
+    using_yaml = true
+    MaRuKu::Globals[:yaml_frontmatter] = true
   end
 
 
@@ -99,6 +105,10 @@ if using_math
   require 'maruku/ext/math'
 end
 
+if using_yaml
+  cli_puts "Using YAML extensions."
+  require 'maruku/ext/yaml'
+end
 
 unless ARGV.empty?
   if ARGV.size > 1 && output_file

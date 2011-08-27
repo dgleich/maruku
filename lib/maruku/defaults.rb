@@ -22,6 +22,8 @@ module MaRuKu
   Globals = {
     :unsafe_features => false,
     :on_error => :warning,
+    
+    :yaml_frontmatter => false,
 
     :use_numbered_headers => false,
 

@@ -26,7 +26,13 @@ module MaRuKu; module In; module Markdown; module BlockLevelParser
 		
 	def parse_doc(s)
 		# FIXME \r\n => \n
-		meta2 =  parse_email_headers(s)
+		if Maruku::Globals[:yaml_frontmatter]
+			meta2 = parse_yaml_headers(s)
+		else
+			meta2 = parse_email_headers(s)
+		end
+        
+        puts meta2.inspect
 		data = meta2[:data]
 		meta2.delete :data
 		
