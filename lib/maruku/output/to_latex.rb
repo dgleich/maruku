@@ -350,7 +350,7 @@ Otherwise, a standard `verbatim` environment is used.
 			elsif SAFE_CHARS.include? b
 				s << b
 			else
-				s += "\\char%d" % b.ord 
+				s += "\\char%d" % b[0].ord 
 			end
 		end
 		s
@@ -369,17 +369,7 @@ Otherwise, a standard `verbatim` environment is used.
 	end
 
 	def to_latex_immediate_link
-		url = self.url
-		text = url.gsub(/^mailto:/,'') # don't show mailto
-#			gsub('~','$\sim$')
-		text = latex_escape(text)
-		if url[0,1] == '#'
-			url = url[1,url.size]
-			return "\\hyperlink{#{url}}{#{text}}"
-		else
-
-			return "\\href{#{url}}{#{text}}"
-		end
+	    return "\\url{#{url}}"
 	end
 
 	def to_latex_im_link
