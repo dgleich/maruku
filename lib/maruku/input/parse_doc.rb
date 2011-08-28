@@ -32,7 +32,6 @@ module MaRuKu; module In; module Markdown; module BlockLevelParser
 			meta2 = parse_email_headers(s)
 		end
         
-        puts meta2.inspect
 		data = meta2[:data]
 		meta2.delete :data
 		
