@@ -91,16 +91,29 @@ module MaRuKu
 			
           script = create_html_element 'script'
           script.attributes['type'] = 'math/tex; mode=display'
-          script << Text.new("#{tex.strip}")
-			
+          #script << Text.new("#{tex.strip}",entity_filter=true)
+          # from http://www.ruby-forum.com/topic/49287
+          script.text = Text.new("#{tex.strip}",
+                                   respect_whitespace=true,
+                                   parent=nil,
+                                   raw=true,
+                                   entity_filter=nil,
+                                   illegal=%r/(.)^/)  # match nothing!
+	
           equation << span 
           equation << script
 			
           return equation
         else
-          script = create_html_element 'script'
+          script = Element.new 'script'
           script.attributes['type'] = 'math/tex'
-          script << Text.new("#{tex.strip}")
+          # from http://www.ruby-forum.com/topic/49287
+          script.text = Text.new("#{tex.strip}",
+                                   respect_whitespace=true,
+                                   parent=nil,
+                                   raw=true,
+                                   entity_filter=nil,
+                                   illegal=%r/(.)^/)  # match nothing!
           return script
         end
       end

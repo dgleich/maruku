@@ -48,6 +48,7 @@ opt = OptionParser.new do |opts|
     MaRuKu::Globals[:html_math_output_mathjax] = true
     MaRuKu::Globals[:html_math_output_mathml] = false
     MaRuKu::Globals[:html_math_output_span_equations] = true
+    MaRuKu::Globals[:html_math_engine] = 'none'
   end
 
   opts.on("-i", "--math-images ENGINE", "Uses ENGINE to render TeX to PNG.") do |s|
