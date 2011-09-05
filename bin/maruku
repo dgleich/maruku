@@ -37,7 +37,7 @@ opt = OptionParser.new do |opts|
     break_on_error = v
   end
   
-  opts.on('-y', "--yaml-frontmatter") do |v|
+  opts.on('-y', "--yaml-frontmatter", "Assume the frontmatter is YAML") do |v|
     using_yaml = true
     MaRuKu::Globals[:yaml_frontmatter] = true
   end
@@ -65,6 +65,12 @@ opt = OptionParser.new do |opts|
     using_math = true
     using_mathml = true
     MaRuKu::Globals[:html_math_engine] = s
+  end
+  
+  opts.on("-t", "--tex-math", "Use TeX math defaults") do |s|
+    MaRuKu::Globals[:html_math_output_span_equations] = true
+    using_math = true
+    using_mathml = false
   end
 
   opts.on("-o", "--output FILE", "Output filename") {|s| output_file = s}
